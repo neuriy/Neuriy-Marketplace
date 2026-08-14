@@ -1,0 +1,36 @@
+# Build
+**/bin/
+**/obj/
+**/out/
+*.user
+*.suo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Marketplace runtime data
+src/api/uploads/*
+!src/api/uploads/.gitkeep
+src/api/static/icons/*
+!src/api/static/icons/.gitkeep
+src/api/data/apps.json
+src/api/data/*.tmp
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Secrets
+.env
+.env.*
+
+# Local screenshots / artifacts
+*.webp
+*.png
+!src/**/*.png

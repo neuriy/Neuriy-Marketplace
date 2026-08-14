@@ -1,0 +1,43 @@
+@using System.Globalization
+@model MarketplaceApp
+@{
+    ViewData["Title"] = Model.Name;
+    var apiBase = (string?)ViewBag.ApiBaseUrl ?? "http://127.0.0.1:8000";
+    var icon = string.IsNullOrWhiteSpace(Model.IconUrl)
+        ? Url.Content("~/images/neuriy-mark.svg")
+        : (Model.IconUrl!.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? Model.IconUrl
+            : apiBase.TrimEnd('/') + Model.IconUrl);
+    var filled = (int)Math.Round(Math.Clamp(Model.Rating, 0, 5));
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="banner banner--ok">@TempData["Success"]</div>
+}
+
+<section class="panel panel--detail">
+    <div class="detail">
+        <img class="detail__icon" src="@icon" alt="" width="112" height="112" />
+        <div class="detail__body">
+            <h1 class="detail__title">@Model.Name</h1>
+            <p class="detail__meta">@Model.Developer · @Model.Category · v@(Model.Version)</p>
+            <p class="detail__price">@Model.Price</p>
+            <div class="detail__stars" aria-label="@Model.Rating.ToString("0.0", CultureInfo.InvariantCulture) stars">
+                @for (var i = 1; i <= 5; i++)
+                {
+                    <span class="star @(i <= filled ? "is-filled" : "")">★</span>
+                }
+                <span class="detail__downloads">@Model.Downloads.ToString("N0") downloads</span>
+            </div>
+            <div class="detail__actions">
+                <a class="button button--primary" asp-controller="Apps" asp-action="Download" asp-route-id="@Model.Id">Download for Neuriy AI</a>
+                <a class="button button--ghost" asp-controller="Home" asp-action="Index">Back to store</a>
+            </div>
+        </div>
+    </div>
+    <div class="detail__description">
+        <h2>About this app</h2>
+        <p>@Model.Description</p>
+    </div>
+</section>

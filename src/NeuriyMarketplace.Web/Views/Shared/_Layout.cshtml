@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] != null ? ViewData["Title"] + " · " : "")Neuriy Marketplace</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/neuriy-mark.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/marketplace.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <img src="~/images/neuriy-logo.svg" alt="" width="36" height="36" />
+                <span class="brand__text">
+                    <span class="brand__name">Neuriy</span>
+                    <span class="brand__sub">Marketplace</span>
+                </span>
+            </a>
+
+            <form class="search" asp-controller="Home" asp-action="Index" method="get" role="search">
+                <input type="hidden" name="category" value="@(ViewBag.Category ?? "All Categories")" />
+                <input type="hidden" name="sort" value="@(ViewBag.Sort ?? "popular")" />
+                <span class="search__icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                        <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <input class="search__input"
+                       type="search"
+                       name="q"
+                       value="@ViewBag.Query"
+                       placeholder="Search"
+                       aria-label="Search apps" />
+            </form>
+
+            <div class="site-header__actions">
+                <a class="header-link" asp-controller="Apps" asp-action="Upload">Upload</a>
+                <button type="button" class="icon-button" aria-label="Settings">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="M19.4 13.5c.05-.5.05-1 0-1.5l1.7-1.3-1.6-2.8-2 .5a7.3 7.3 0 0 0-1.3-.8l-.4-2.1h-3.2l-.4 2.1c-.45.2-.88.47-1.28.78l-2-.5-1.6 2.8 1.7 1.3c-.05.5-.05 1 0 1.5l-1.7 1.3 1.6 2.8 2-.5c.4.31.83.58 1.28.78l.4 2.1h3.2l.4-2.1c.45-.2.88-.47 1.28-.78l2 .5 1.6-2.8-1.7-1.3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner">
+            <span>© @DateTime.UtcNow.Year Neuriy Marketplace</span>
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

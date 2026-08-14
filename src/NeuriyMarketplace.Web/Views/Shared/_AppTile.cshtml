@@ -1,0 +1,23 @@
+@using System.Globalization
+@model MarketplaceApp
+@{
+    var apiBase = (string?)ViewBag.ApiBaseUrl ?? "http://127.0.0.1:8000";
+    var icon = string.IsNullOrWhiteSpace(Model.IconUrl)
+        ? Url.Content("~/images/neuriy-mark.svg")
+        : (Model.IconUrl!.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            ? Model.IconUrl
+            : apiBase.TrimEnd('/') + Model.IconUrl);
+    var filled = (int)Math.Round(Math.Clamp(Model.Rating, 0, 5));
+}
+
+<a class="app-tile" asp-controller="Apps" asp-action="Details" asp-route-id="@Model.Id">
+    <img class="app-tile__icon" src="@icon" alt="" width="64" height="64" loading="lazy" />
+    <span class="app-tile__name">@Model.Name</span>
+    <span class="app-tile__price">@Model.Price</span>
+    <span class="app-tile__stars" aria-label="@Model.Rating.ToString("0.0", CultureInfo.InvariantCulture) stars">
+        @for (var i = 1; i <= 5; i++)
+        {
+            <span class="star @(i <= filled ? "is-filled" : "")">★</span>
+        }
+    </span>
+</a>

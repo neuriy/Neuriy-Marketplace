@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1053750-32E9-4B25-BD8F-98AF1AD872CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuriyMarketplace.Web", "src\NeuriyMarketplace.Web\NeuriyMarketplace.Web.csproj", "{1E579F92-70A4-4E14-B087-444D5A765C4C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E579F92-70A4-4E14-B087-444D5A765C4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E579F92-70A4-4E14-B087-444D5A765C4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E579F92-70A4-4E14-B087-444D5A765C4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E579F92-70A4-4E14-B087-444D5A765C4C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1E579F92-70A4-4E14-B087-444D5A765C4C} = {E1053750-32E9-4B25-BD8F-98AF1AD872CE}
+	EndGlobalSection
+EndGlobal
