@@ -1,0 +1,74 @@
+@model UploadAppViewModel
+@{
+    ViewData["Title"] = "Upload App";
+    var categories = (IReadOnlyList<string>?)ViewBag.Categories ?? Array.Empty<string>();
+}
+
+<section class="panel panel--narrow">
+    <h1 class="page-title">Upload your app or tool</h1>
+    <p class="lede">Publish a package for Neuriy AI users to discover and download.</p>
+
+    <form asp-controller="Apps" asp-action="Upload" method="post" enctype="multipart/form-data" class="upload-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+        <label class="field">
+            <span>App name</span>
+            <input asp-for="Name" placeholder="My Neuriy Tool" />
+            <span asp-validation-for="Name" class="field-error"></span>
+        </label>
+
+        <label class="field">
+            <span>Description</span>
+            <textarea asp-for="Description" rows="5" placeholder="What does this app do for Neuriy AI users?"></textarea>
+            <span asp-validation-for="Description" class="field-error"></span>
+        </label>
+
+        <div class="field-row">
+            <label class="field">
+                <span>Category</span>
+                <select asp-for="Category">
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </label>
+            <label class="field">
+                <span>Developer</span>
+                <input asp-for="Developer" />
+            </label>
+        </div>
+
+        <div class="field-row">
+            <label class="field">
+                <span>Price label</span>
+                <input asp-for="Price" />
+            </label>
+            <label class="field">
+                <span>Version</span>
+                <input asp-for="Version" />
+            </label>
+        </div>
+
+        <label class="field">
+            <span>Package file (.neuriy, .zip, or binary)</span>
+            <input asp-for="Package" type="file" required />
+            <span asp-validation-for="Package" class="field-error"></span>
+        </label>
+
+        <label class="field">
+            <span>Icon (optional)</span>
+            <input asp-for="Icon" type="file" accept="image/*,.svg" />
+        </label>
+
+        <div class="form-actions">
+            <button type="submit" class="button button--primary">Publish to Marketplace</button>
+            <a class="button button--ghost" asp-controller="Home" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

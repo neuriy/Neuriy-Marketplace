@@ -1,0 +1,134 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Rules & moderation";
+    var role = Context.Session.GetString("Role");
+    var isAdmin = string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase);
+}
+
+<section class="panel">
+    <h1 class="page-title">Rules & moderation</h1>
+    <p class="lede">Administrators check and enforce marketplace standards. System AI blacklists apps that fail quality rules.</p>
+</section>
+
+@if (isAdmin)
+{
+    <section class="panel">
+        <h2 class="panel__title">Users & roles</h2>
+        <p class="lede">Roles: <code>user</code>, <code>admin</code>, <code>administrator</code> (rules / moderation).</p>
+        <div class="admin-table">
+            @foreach (var user in Model.Users)
+            {
+                <div class="admin-row">
+                    <div>
+                        <strong>@user.Username</strong>
+                        <div class="muted">@user.Email · @user.Role</div>
+                    </div>
+                    <form method="post" asp-action="SetRole" class="role-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <select name="role">
+                            @if (user.Role == "user")
+                            {
+                                <option value="user" selected>user</option>
+                            }
+                            else
+                            {
+                                <option value="user">user</option>
+                            }
+                            @if (user.Role == "administrator")
+                            {
+                                <option value="administrator" selected>administrator</option>
+                            }
+                            else
+                            {
+                                <option value="administrator">administrator</option>
+                            }
+                            @if (user.Role == "admin")
+                            {
+                                <option value="admin" selected>admin</option>
+                            }
+                            else
+                            {
+                                <option value="admin">admin</option>
+                            }
+                        </select>
+                        <button type="submit" class="button button--ghost">Save</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<section class="panel">
+    <h2 class="panel__title">System AI & custom rules</h2>
+    <div class="admin-table">
+        @foreach (var rule in Model.Rules)
+        {
+            <div class="admin-row">
+                <div>
+                    <strong>@rule.Title</strong>
+                    <div class="muted">@rule.Code · @rule.Severity @(rule.IsSystem == 1 ? "· system_ai" : "") @(rule.Enabled == 1 ? "" : "· disabled")</div>
+                    <p>@rule.Description</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <h3 class="subhead">Add rule</h3>
+    <form asp-action="CreateRule" method="post" class="upload-form">
+        @Html.AntiForgeryToken()
+        <label class="field"><span>Title</span><input name="Title" required /></label>
+        <label class="field"><span>Description</span><textarea name="Description" rows="3" required></textarea></label>
+        <div class="field-row">
+            <label class="field">
+                <span>Severity</span>
+                <select name="Severity">
+                    <option value="block">block</option>
+                    <option value="warn">warn</option>
+                </select>
+            </label>
+            <label class="field"><span>Code (optional)</span><input name="Code" /></label>
+        </div>
+        <label class="field"><span>Pattern (optional regex)</span><input name="Pattern" /></label>
+        <label class="field"><span>Min description length (optional)</span><input name="MinDescriptionLength" type="number" min="0" /></label>
+        <div class="form-actions">
+            <button type="submit" class="button button--primary">Add rule</button>
+        </div>
+    </form>
+</section>
+
+<section class="panel">
+    <h2 class="panel__title">Moderation queue</h2>
+    <div class="admin-table">
+        @foreach (var appItem in Model.Queue)
+        {
+            <div class="admin-row">
+                <div>
+                    <strong>@appItem.Name</strong>
+                    <div class="muted">@appItem.Status · score @(appItem.ModerationScore?.ToString("0") ?? "—") · @appItem.Category</div>
+                    <p class="muted">@appItem.ModerationNotes</p>
+                </div>
+                <div class="admin-actions">
+                    <form method="post" asp-action="SetStatus" class="inline-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="appId" value="@appItem.Id" />
+                        <input type="hidden" name="status" value="approved" />
+                        <button class="button button--ghost" type="submit">Approve</button>
+                    </form>
+                    <form method="post" asp-action="SetStatus" class="inline-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="appId" value="@appItem.Id" />
+                        <input type="hidden" name="status" value="blacklisted" />
+                        <button class="button button--ghost" type="submit">Blacklist</button>
+                    </form>
+                    <form method="post" asp-action="Remoderate" class="inline-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="appId" value="@appItem.Id" />
+                        <button class="button button--primary" type="submit">Run system AI</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</section>
