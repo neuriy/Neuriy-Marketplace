@@ -37,5 +37,5 @@ src/api/data/*.db-*
 
 # Local screenshots / artifacts
 *.webp
-*.png
-!src/**/*.png
+# Allow committed demo media
+!docs/media/**
