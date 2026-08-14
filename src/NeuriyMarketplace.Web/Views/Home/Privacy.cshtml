@@ -1,11 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Privacy";
 }
-
-<section class="panel panel--narrow">
+<section class="panel panel--narrow content-page">
     <h1 class="page-title">Privacy</h1>
     <p class="lede">
-        Neuriy Marketplace stores app metadata and uploaded packages so developers can publish tools
-        and users can download them for Neuriy AI. Do not upload secrets or personal data in package files.
+        Neuriy Marketplace stores account details, app metadata, uploaded packages, and moderation results
+        so developers can publish tools and users can download them for Neuriy AI.
     </p>
+    <ul>
+        <li>Do not upload secrets or personal data inside package files.</li>
+        <li>Passwords are hashed; JWTs authenticate API calls from the storefront and SDK.</li>
+        <li>Administrators can review moderation queues and rule checks.</li>
+    </ul>
+    <p><a asp-controller="Pages" asp-action="Cookies">Cookie policy</a> · <a asp-controller="Pages" asp-action="Terms">Terms</a></p>
 </section>

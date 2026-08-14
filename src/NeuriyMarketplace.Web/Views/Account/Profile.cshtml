@@ -1,0 +1,18 @@
+@model MarketplaceUser
+@{
+    ViewData["Title"] = "Profile";
+    var initial = string.IsNullOrWhiteSpace(Model.Username) ? "?" : char.ToUpperInvariant(Model.Username[0]).ToString();
+}
+<section class="panel panel--narrow content-page">
+    <div class="profile-header">
+        <span class="user-avatar user-avatar--xl" aria-hidden="true">@initial</span>
+        <div>
+            <h1 class="page-title">@Model.Username</h1>
+            <p class="lede">@Model.Email · role <strong>@Model.Role</strong></p>
+        </div>
+    </div>
+    <div class="form-actions">
+        <a class="button button--ghost" asp-controller="Account" asp-action="Settings">Settings</a>
+        <a class="button button--primary" asp-controller="Apps" asp-action="Upload">Upload app</a>
+    </div>
+</section>

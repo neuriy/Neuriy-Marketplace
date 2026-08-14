@@ -2,21 +2,60 @@
 
 AI app store for **Neuriy AI** — browse, download, and publish apps/tools. Built as an ASP.NET Core MVC storefront with a Python FastAPI backend, styled as a close copy of the classic Firefox Marketplace layout.
 
+## Demo
+
+Walkthrough video (home → app details → register/login → upload → admin rules):
+
+[![Neuriy Marketplace walkthrough](docs/media/01-home.png)](docs/media/neuriy-marketplace-walkthrough.mp4)
+
+- [Watch walkthrough (MP4)](docs/media/neuriy-marketplace-walkthrough.mp4)
+- [Slideshow demo (MP4)](docs/media/neuriy-marketplace-demo.mp4)
+
+### Screenshots
+
+#### Home store
+![Neuriy Marketplace home](docs/media/01-home.png)
+
+#### New apps tab
+![New tab](docs/media/02-new-tab.png)
+
+#### App details
+![App details](docs/media/03-app-details.png)
+
+#### Register (first account becomes admin)
+![Register](docs/media/04-register.png)
+
+#### Signed-in home
+![Signed in](docs/media/05-logged-in-home.png)
+
+#### Upload app
+![Upload](docs/media/06-upload.png)
+
+#### Admin rules & moderation
+![Admin rules](docs/media/07-admin-rules.png)
+
 ## Stack
 
 | Layer | Tech |
 | --- | --- |
 | Web UI | ASP.NET Core 8 MVC (`src/NeuriyMarketplace.Web`) |
 | API | Python FastAPI (`src/api`) |
-| Storage | JSON catalog + local package/icon files |
+| Database | Turso / libSQL (`libsql://neuriymp-ericksonholding.aws-eu-west-1.turso.io`) with local SQLite fallback |
+| Auth | JWT sessions + roles (`user`, `admin`, `administrator`) |
+| Moderation | System AI rules engine (blacklist low-standard apps) |
 
 ## Features
 
 - Featured, Popular, and New app shelves
+- Polished store home, navbar user menu, and multi-column footer
+- Footer pages: About, Developers, Support, Terms, Cookies, Community, Publishers, SDK
 - Category filter and search
 - App detail page with ratings and download counts
 - Download packages for Neuriy AI
 - Upload your own app/tool (package + optional icon)
+- Register / sign-in (first account = admin)
+- Admin / administrator rules & moderation panel
+- **Neuriy Chat SDK** (`sdk/python` + `sdk/neuriy-chat/manifest.json`)
 
 ## Prerequisites
 
@@ -56,12 +95,38 @@ API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 }
 ```
 
+## Neuriy Chat SDK
+
+Install and open the marketplace from Neuriy Chat:
+
+```bash
+pip install -e ./sdk/python
+export NEURIY_MARKETPLACE_URL=http://127.0.0.1:8000
+export NEURIY_MARKETPLACE_STORE_URL=http://127.0.0.1:5011
+```
+
+```python
+from neuriy_marketplace import MarketplaceClient, chat_tools, execute_tool
+
+client = MarketplaceClient()
+apps = client.search_apps("assistant")
+open_payload = client.open_app(apps[0]["id"])  # deep links for Neuriy Chat
+tools = chat_tools()  # register these tools in Neuriy Chat
+```
+
+Plugin manifest: [`sdk/neuriy-chat/manifest.json`](sdk/neuriy-chat/manifest.json)  
+In-app guide: [http://127.0.0.1:5011/Pages/Sdk](http://127.0.0.1:5011/Pages/Sdk)
+
 ## Project layout
 
 ```
 src/
-  api/                      # FastAPI: catalog, upload, download
-  NeuriyMarketplace.Web/    # MVC UI (Firefox Marketplace-style)
+  api/                      # FastAPI: auth, catalog, upload, download, rules
+  NeuriyMarketplace.Web/    # MVC UI (store + account + pages)
+sdk/
+  python/                   # Neuriy Chat Python SDK
+  neuriy-chat/              # Chat plugin manifest
+docs/media/                 # Screenshots + demo videos
 scripts/
   start-api.sh
   start-web.sh
@@ -69,12 +134,14 @@ scripts/
 
 ## API overview
 
+- `POST /api/auth/register` · `POST /api/auth/login` · `GET /api/auth/me`
 - `GET /api/apps` — list/search (`q`, `category`, `featured`, `sort`)
 - `GET /api/apps/{id}` — app details
-- `POST /api/apps` — multipart upload (`name`, `description`, `category`, `package`, optional `icon`)
-- `GET /api/apps/{id}/download` — download package
+- `POST /api/apps` — multipart upload (auth required; system AI moderation runs)
+- `GET /api/apps/{id}/download` — download approved package
+- `GET /api/rules` · `POST /api/rules` — administrator/admin rule management
+- `GET /api/apps/moderation/queue` — moderation queue
 - `GET /api/categories` — category list
-
 
 ## Database (Turso / libSQL)
 

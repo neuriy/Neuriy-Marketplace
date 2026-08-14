@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neuriy-marketplace"
+version = "1.0.0"
+description = "Neuriy Marketplace SDK for Neuriy Chat"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Neuriy" }]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/neuriy/Neuriy-Marketplace"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["neuriy_marketplace*"]

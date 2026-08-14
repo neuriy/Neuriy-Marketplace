@@ -1,0 +1,39 @@
+{
+  "id": "neuriy-marketplace",
+  "name": "Neuriy Marketplace",
+  "version": "1.0.0",
+  "description": "Search, inspect, and open Neuriy Marketplace apps from Neuriy Chat.",
+  "homepage": "http://127.0.0.1:5011/Pages/Sdk",
+  "api_base_url_env": "NEURIY_MARKETPLACE_URL",
+  "store_url_env": "NEURIY_MARKETPLACE_STORE_URL",
+  "sdk": {
+    "python": {
+      "package": "neuriy-marketplace",
+      "entry": "neuriy_marketplace",
+      "tools_factory": "neuriy_marketplace.tools:chat_tools",
+      "executor": "neuriy_marketplace.tools:execute_tool"
+    }
+  },
+  "tools": [
+    {
+      "name": "marketplace_search",
+      "description": "Search Neuriy Marketplace for AI apps and tools."
+    },
+    {
+      "name": "marketplace_get_app",
+      "description": "Get details for one marketplace app by id."
+    },
+    {
+      "name": "marketplace_list_categories",
+      "description": "List marketplace categories."
+    },
+    {
+      "name": "marketplace_open_app",
+      "description": "Open a marketplace app in Neuriy Chat with deep links."
+    }
+  ],
+  "open_protocol": {
+    "type": "neuriy.marketplace.open_app",
+    "actions": ["Open in Marketplace", "Download for Neuriy AI"]
+  }
+}

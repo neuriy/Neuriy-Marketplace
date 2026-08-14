@@ -14,19 +14,29 @@
     @{
         var username = Context.Session.GetString("Username");
         var role = Context.Session.GetString("Role");
+        var email = Context.Session.GetString("Email");
         var signedIn = !string.IsNullOrWhiteSpace(Context.Session.GetString("AccessToken"));
         var isModerator = string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase)
                           || string.Equals(role, "administrator", StringComparison.OrdinalIgnoreCase);
+        var initial = string.IsNullOrWhiteSpace(username) ? "?" : char.ToUpperInvariant(username[0]).ToString();
+        var current = $"{ViewContext.RouteData.Values["controller"]}/{ViewContext.RouteData.Values["action"]}";
     }
     <header class="site-header">
         <div class="site-header__inner">
-            <a class="brand" asp-controller="Home" asp-action="Index">
+            <a class="brand" asp-controller="Home" asp-action="Index" aria-label="Neuriy Marketplace home">
                 <img src="~/images/neuriy-logo.svg" alt="" width="36" height="36" />
                 <span class="brand__text">
                     <span class="brand__name">Neuriy</span>
                     <span class="brand__sub">Marketplace</span>
                 </span>
             </a>
+
+            <nav class="site-nav" aria-label="Primary">
+                <a class="site-nav__link @(current.StartsWith("Home/Index") ? "is-active" : "")" asp-controller="Home" asp-action="Index">Store</a>
+                <a class="site-nav__link @(current.StartsWith("Pages/Developers") || current.StartsWith("Pages/Sdk") ? "is-active" : "")" asp-controller="Pages" asp-action="Sdk">SDK</a>
+                <a class="site-nav__link @(current.StartsWith("Pages/Publishers") ? "is-active" : "")" asp-controller="Pages" asp-action="Publishers">Publish</a>
+                <a class="site-nav__link @(current.StartsWith("Pages/Community") ? "is-active" : "")" asp-controller="Pages" asp-action="Community">Community</a>
+            </nav>
 
             <form class="search" asp-controller="Home" asp-action="Index" method="get" role="search">
                 <input type="hidden" name="category" value="@(ViewBag.Category ?? "All Categories")" />
@@ -41,35 +51,52 @@
                        type="search"
                        name="q"
                        value="@ViewBag.Query"
-                       placeholder="Search"
+                       placeholder="Search apps & tools"
                        aria-label="Search apps" />
             </form>
 
             <div class="site-header__actions">
                 @if (signedIn)
                 {
-                    <a class="header-link" asp-controller="Apps" asp-action="Upload">Upload</a>
-                    @if (isModerator)
-                    {
-                        <a class="header-link" asp-controller="Admin" asp-action="Index">Rules</a>
-                    }
-                    <span class="header-user" title="@role">@username</span>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="header-link header-link--button">Logout</button>
-                    </form>
+                    <a class="header-link header-link--upload" asp-controller="Apps" asp-action="Upload">Upload</a>
+                    <div class="user-menu" data-user-menu>
+                        <button type="button" class="user-menu__button" data-user-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+                            <span class="user-avatar" aria-hidden="true">@initial</span>
+                            <span class="user-menu__meta">
+                                <span class="user-menu__name">@username</span>
+                                <span class="user-menu__role">@role</span>
+                            </span>
+                            <svg class="user-menu__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                        <div class="user-menu__dropdown" data-user-menu-panel hidden>
+                            <div class="user-menu__header">
+                                <span class="user-avatar user-avatar--lg" aria-hidden="true">@initial</span>
+                                <div>
+                                    <strong>@username</strong>
+                                    <div class="muted">@(string.IsNullOrWhiteSpace(email) ? role : email)</div>
+                                </div>
+                            </div>
+                            <a asp-controller="Account" asp-action="Profile">Profile</a>
+                            <a asp-controller="Account" asp-action="Settings">Settings</a>
+                            @if (isModerator)
+                            {
+                                <a asp-controller="Admin" asp-action="Index">Rules & moderation</a>
+                            }
+                            <a asp-controller="Pages" asp-action="Sdk">Open in Neuriy Chat</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="user-menu__logout">Sign out</button>
+                            </form>
+                        </div>
+                    </div>
                 }
                 else
                 {
                     <a class="header-link" asp-controller="Account" asp-action="Login">Sign in</a>
-                    <a class="header-link" asp-controller="Account" asp-action="Register">Register</a>
+                    <a class="button button--primary button--compact" asp-controller="Account" asp-action="Register">Register</a>
                 }
-                <button type="button" class="icon-button" aria-label="Settings">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8"/>
-                        <path d="M19.4 13.5c.05-.5.05-1 0-1.5l1.7-1.3-1.6-2.8-2 .5a7.3 7.3 0 0 0-1.3-.8l-.4-2.1h-3.2l-.4 2.1c-.45.2-.88.47-1.28.78l-2-.5-1.6 2.8 1.7 1.3c-.05.5-.05 1 0 1.5l-1.7 1.3 1.6 2.8 2-.5c.4.31.83.58 1.28.78l.4 2.1h3.2l.4-2.1c.45-.2.88-.47 1.28-.78l2 .5 1.6-2.8-1.7-1.3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                    </svg>
-                </button>
             </div>
         </div>
     </header>
@@ -87,12 +114,46 @@
     </main>
 
     <footer class="site-footer">
-        <div class="site-footer__inner">
+        <div class="site-footer__grid">
+            <div class="footer-brand">
+                <a class="brand" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/neuriy-logo.svg" alt="" width="32" height="32" />
+                    <span class="brand__text">
+                        <span class="brand__name">Neuriy</span>
+                        <span class="brand__sub">Marketplace</span>
+                    </span>
+                </a>
+                <p>Discover, download, and publish AI apps and tools for Neuriy Chat.</p>
+            </div>
+            <div>
+                <h3>Discover</h3>
+                <a asp-controller="Home" asp-action="Index">Store</a>
+                <a asp-controller="Pages" asp-action="Community">Community</a>
+                <a asp-controller="Pages" asp-action="Publishers">Publishers</a>
+                <a asp-controller="Pages" asp-action="Support">Support</a>
+            </div>
+            <div>
+                <h3>Developers</h3>
+                <a asp-controller="Pages" asp-action="Sdk">Neuriy Chat SDK</a>
+                <a asp-controller="Pages" asp-action="Developers">Developer docs</a>
+                <a asp-controller="Apps" asp-action="Upload">Upload an app</a>
+                <a href="http://127.0.0.1:8000/docs" rel="noopener">API reference</a>
+            </div>
+            <div>
+                <h3>Company</h3>
+                <a asp-controller="Pages" asp-action="About">About</a>
+                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <a asp-controller="Pages" asp-action="Terms">Terms</a>
+                <a asp-controller="Pages" asp-action="Cookies">Cookies</a>
+            </div>
+        </div>
+        <div class="site-footer__bottom">
             <span>© @DateTime.UtcNow.Year Neuriy Marketplace</span>
-            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <span class="muted">Built for Neuriy AI</span>
         </div>
     </footer>
 
+    <script src="~/js/marketplace.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
