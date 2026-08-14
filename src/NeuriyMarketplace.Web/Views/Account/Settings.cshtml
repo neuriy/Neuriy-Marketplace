@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Settings";
+}
+<section class="panel panel--narrow content-page">
+    <h1 class="page-title">Settings</h1>
+    <p class="lede">Signed in as <strong>@ViewBag.Username</strong> (@ViewBag.Role).</p>
+    <ul>
+        <li>Session cookie keeps you signed in on this device.</li>
+        <li>Role changes are managed by marketplace admins.</li>
+        <li>Use <a asp-controller="Pages" asp-action="Sdk">Neuriy Chat SDK</a> to connect installs from chat.</li>
+    </ul>
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="button button--ghost">Sign out</button>
+    </form>
+</section>

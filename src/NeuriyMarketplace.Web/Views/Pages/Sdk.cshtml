@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Neuriy Chat SDK";
+}
+<section class="panel panel--narrow content-page">
+    <h1 class="page-title">Open Marketplace in Neuriy Chat</h1>
+    <p class="lede">Use the official Python SDK and chat tool manifest so Neuriy Chat can search, inspect, and open marketplace apps.</p>
+
+    <h2>1. Install</h2>
+    <pre class="code-block"><code>pip install -e ./sdk/python</code></pre>
+
+    <h2>2. Point at your API</h2>
+    <pre class="code-block"><code>export NEURIY_MARKETPLACE_URL=http://127.0.0.1:8000
+# optional when calling authenticated endpoints
+export NEURIY_MARKETPLACE_TOKEN=your-jwt</code></pre>
+
+    <h2>3. Use from Python / Neuriy Chat tools</h2>
+    <pre class="code-block"><code>from neuriy_marketplace import MarketplaceClient, chat_tools
+
+client = MarketplaceClient()
+apps = client.search_apps("assistant")
+tools = chat_tools()  # OpenAI-compatible tool schemas for Neuriy Chat</code></pre>
+
+    <h2>4. Register the chat plugin</h2>
+    <p>Load <code>sdk/neuriy-chat/manifest.json</code> in Neuriy Chat to expose marketplace actions:</p>
+    <ul>
+        <li><code>marketplace_search</code></li>
+        <li><code>marketplace_get_app</code></li>
+        <li><code>marketplace_list_categories</code></li>
+        <li><code>marketplace_open_app</code> — returns a deep link / install payload for Neuriy Chat</li>
+    </ul>
+
+    <p>
+        <a class="button button--primary" href="/sdk/neuriy-chat/manifest.json">Download manifest</a>
+        <a class="button button--ghost" asp-controller="Pages" asp-action="Developers">Developer docs</a>
+    </p>
+</section>
