@@ -488,6 +488,84 @@ a:hover {
   font-size: 0.9rem;
 }
 
+.header-user {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.header-link--button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.inline-form {
+  display: inline;
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.subhead {
+  margin: 24px 0 12px;
+  font-size: 1.05rem;
+}
+
+.admin-table {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #ececec;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.role-form {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.role-form select {
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.status-pill {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 4px 0 8px;
+}
+
+.status-pill--approved { color: #1f6b3a; }
+.status-pill--pending { color: #8a5a00; }
+.status-pill--blacklisted { color: #b42318; }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
 @media (max-width: 1100px) {
   .app-row,
   .app-grid {

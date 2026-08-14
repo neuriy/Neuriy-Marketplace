@@ -1,0 +1,21 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<section class="panel panel--narrow">
+    <h1 class="page-title">Create account</h1>
+    <p class="lede">The first account becomes <strong>admin</strong>. Later accounts start as <strong>user</strong>.</p>
+    <form asp-action="Register" method="post" class="upload-form">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+        <label class="field"><span>Email</span><input asp-for="Email" /></label>
+        <label class="field"><span>Username</span><input asp-for="Username" /></label>
+        <label class="field"><span>Password</span><input asp-for="Password" /></label>
+        <div class="form-actions">
+            <button type="submit" class="button button--primary">Create account</button>
+            <a class="button button--ghost" asp-action="Login">Sign in</a>
+        </div>
+    </form>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

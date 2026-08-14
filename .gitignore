@@ -29,6 +29,11 @@ src/api/data/*.tmp
 # Secrets
 .env
 .env.*
+!.env.example
+
+# Local DB fallback
+src/api/data/*.db
+src/api/data/*.db-*
 
 # Local screenshots / artifacts
 *.webp

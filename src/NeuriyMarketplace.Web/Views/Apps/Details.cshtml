@@ -9,11 +9,7 @@
             ? Model.IconUrl
             : apiBase.TrimEnd('/') + Model.IconUrl);
     var filled = (int)Math.Round(Math.Clamp(Model.Rating, 0, 5));
-}
-
-@if (TempData["Success"] != null)
-{
-    <div class="banner banner--ok">@TempData["Success"]</div>
+    var canDownload = string.Equals(Model.Status, "approved", StringComparison.OrdinalIgnoreCase);
 }
 
 <section class="panel panel--detail">
@@ -23,6 +19,11 @@
             <h1 class="detail__title">@Model.Name</h1>
             <p class="detail__meta">@Model.Developer · @Model.Category · v@(Model.Version)</p>
             <p class="detail__price">@Model.Price</p>
+            <p class="status-pill status-pill--@Model.Status.ToLowerInvariant()">Status: @Model.Status</p>
+            @if (Model.ModerationScore.HasValue)
+            {
+                <p class="muted">System AI score: @Model.ModerationScore.Value.ToString("0.0", CultureInfo.InvariantCulture)</p>
+            }
             <div class="detail__stars" aria-label="@Model.Rating.ToString("0.0", CultureInfo.InvariantCulture) stars">
                 @for (var i = 1; i <= 5; i++)
                 {
@@ -31,7 +32,14 @@
                 <span class="detail__downloads">@Model.Downloads.ToString("N0") downloads</span>
             </div>
             <div class="detail__actions">
-                <a class="button button--primary" asp-controller="Apps" asp-action="Download" asp-route-id="@Model.Id">Download for Neuriy AI</a>
+                @if (canDownload)
+                {
+                    <a class="button button--primary" asp-controller="Apps" asp-action="Download" asp-route-id="@Model.Id">Download for Neuriy AI</a>
+                }
+                else
+                {
+                    <span class="button button--ghost" aria-disabled="true">Download unavailable</span>
+                }
                 <a class="button button--ghost" asp-controller="Home" asp-action="Index">Back to store</a>
             </div>
         </div>
@@ -39,5 +47,10 @@
     <div class="detail__description">
         <h2>About this app</h2>
         <p>@Model.Description</p>
+        @if (!string.IsNullOrWhiteSpace(Model.ModerationNotes))
+        {
+            <h2>Moderation notes</h2>
+            <p class="muted">@Model.ModerationNotes</p>
+        }
     </div>
 </section>

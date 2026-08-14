@@ -14,6 +14,10 @@ public class MarketplaceApp
     public bool Featured { get; set; }
     public string? IconUrl { get; set; }
     public string? PackageFilename { get; set; }
+    public string? OwnerId { get; set; }
+    public string Status { get; set; } = "pending";
+    public double? ModerationScore { get; set; }
+    public string? ModerationNotes { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

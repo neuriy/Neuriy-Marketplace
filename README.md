@@ -74,3 +74,36 @@ scripts/
 - `POST /api/apps` — multipart upload (`name`, `description`, `category`, `package`, optional `icon`)
 - `GET /api/apps/{id}/download` — download package
 - `GET /api/categories` — category list
+
+
+## Database (Turso / libSQL)
+
+Default remote database:
+
+```text
+libsql://neuriymp-ericksonholding.aws-eu-west-1.turso.io
+```
+
+Set secrets before starting the API:
+
+```bash
+export TURSO_DATABASE_URL=libsql://neuriymp-ericksonholding.aws-eu-west-1.turso.io
+export TURSO_AUTH_TOKEN=your-turso-token
+export JWT_SECRET=change-me
+```
+
+If `TURSO_AUTH_TOKEN` is missing, the API falls back to local SQLite at `src/api/data/neuriy.db` so development still works.
+
+Copy `src/api/.env.example` to `src/api/.env` if you prefer dotenv files.
+
+## Accounts & roles
+
+| Role | Who | Powers |
+| --- | --- | --- |
+| `admin` | **First registered account** | Full control, assign roles |
+| `user` | Later signups | Browse, download approved apps, upload apps |
+| `administrator` | Assigned by admin | Check/enforce rules, approve or blacklist apps |
+
+## System AI rules
+
+On every upload, `system_ai` scores the app against enabled rules (description quality, spam language, placeholder names, Neuriy relevance, categories). Apps below the quality threshold or failing block rules are **blacklisted** and cannot be downloaded until an administrator overrides.

@@ -17,6 +17,8 @@ public class AppsController : Controller
         _logger = logger;
     }
 
+    private bool IsSignedIn => !string.IsNullOrWhiteSpace(HttpContext.Session.GetString("AccessToken"));
+
     [HttpGet]
     public async Task<IActionResult> Details(string id, CancellationToken cancellationToken)
     {
@@ -33,8 +35,16 @@ public class AppsController : Controller
     [HttpGet]
     public async Task<IActionResult> Upload(CancellationToken cancellationToken)
     {
+        if (!IsSignedIn)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
         ViewBag.Categories = await SafeCategories(cancellationToken);
-        return View(new UploadAppViewModel());
+        return View(new UploadAppViewModel
+        {
+            Developer = HttpContext.Session.GetString("Username") ?? "Community"
+        });
     }
 
     [HttpPost]
@@ -42,8 +52,12 @@ public class AppsController : Controller
     [RequestSizeLimit(104_857_600)]
     public async Task<IActionResult> Upload(UploadAppViewModel model, CancellationToken cancellationToken)
     {
-        ViewBag.Categories = await SafeCategories(cancellationToken);
+        if (!IsSignedIn)
+        {
+            return RedirectToAction("Login", "Account");
+        }
 
+        ViewBag.Categories = await SafeCategories(cancellationToken);
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -52,13 +66,21 @@ public class AppsController : Controller
         try
         {
             var created = await _api.UploadAppAsync(model, cancellationToken);
-            TempData["Success"] = $"“{created.Name}” was published to Neuriy Marketplace.";
+            if (string.Equals(created.Status, "blacklisted", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = $"“{created.Name}” was blacklisted by system AI rules (score {created.ModerationScore:0}). {created.ModerationNotes}";
+            }
+            else
+            {
+                TempData["Success"] = $"“{created.Name}” published with status {created.Status} (score {created.ModerationScore:0}).";
+            }
+
             return RedirectToAction(nameof(Details), new { id = created.Id });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to upload app");
-            ModelState.AddModelError(string.Empty, "Upload failed. Ensure the Python API is running and the package file is valid.");
+            ModelState.AddModelError(string.Empty, ex.Message);
             return View(model);
         }
     }
@@ -74,7 +96,8 @@ public class AppsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Download failed for {AppId}", id);
-            return NotFound();
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(Details), new { id });
         }
     }
 

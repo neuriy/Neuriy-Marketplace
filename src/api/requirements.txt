@@ -3,3 +3,9 @@ uvicorn==0.52.3
 python-multipart==0.0.32
 aiofiles==25.1.0
 pydantic==2.13.4
+python-dotenv==1.2.2
+libsql==0.1.11
+sqlalchemy-libsql==0.2.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+python-jose[cryptography]==3.5.0

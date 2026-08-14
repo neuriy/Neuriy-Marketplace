@@ -11,6 +11,13 @@
     <link rel="stylesheet" href="~/css/marketplace.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        var username = Context.Session.GetString("Username");
+        var role = Context.Session.GetString("Role");
+        var signedIn = !string.IsNullOrWhiteSpace(Context.Session.GetString("AccessToken"));
+        var isModerator = string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase)
+                          || string.Equals(role, "administrator", StringComparison.OrdinalIgnoreCase);
+    }
     <header class="site-header">
         <div class="site-header__inner">
             <a class="brand" asp-controller="Home" asp-action="Index">
@@ -39,7 +46,24 @@
             </form>
 
             <div class="site-header__actions">
-                <a class="header-link" asp-controller="Apps" asp-action="Upload">Upload</a>
+                @if (signedIn)
+                {
+                    <a class="header-link" asp-controller="Apps" asp-action="Upload">Upload</a>
+                    @if (isModerator)
+                    {
+                        <a class="header-link" asp-controller="Admin" asp-action="Index">Rules</a>
+                    }
+                    <span class="header-user" title="@role">@username</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="header-link header-link--button">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="header-link" asp-controller="Account" asp-action="Login">Sign in</a>
+                    <a class="header-link" asp-controller="Account" asp-action="Register">Register</a>
+                }
                 <button type="button" class="icon-button" aria-label="Settings">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8"/>
@@ -51,6 +75,14 @@
     </header>
 
     <main class="page">
+        @if (TempData["Success"] != null)
+        {
+            <div class="banner banner--ok">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="banner banner--warn">@TempData["Error"]</div>
+        }
         @RenderBody()
     </main>
 
